@@ -1,12 +1,33 @@
-import React from "react";
-import pic from "../components/chat.png";
+import React, { useState } from "react";
+import pic from "../chat.png";
+import Page from "./Page";
+import Axios from "axios";
+
 function HomeGuest() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      await Axios.post("http://localhost:8080/register", {
+        username,
+        email,
+        password,
+      });
+      console.log("User is created");
+    } catch (error) {
+      console.log("There is an error", error);
+    }
+  }
+
   return (
     <>
-      <div className='container py-md-5'>
+      <Page title='Home' wide={true}>
         <div className='row align-items-center'>
           <div className='col-lg-7 py-3 py-md-5'>
-            <span>
+            <span className='image'>
               <img src={pic} alt='chatpost' style={{ height: "150px" }} />
             </span>
             <p className='lead text-muted'>
@@ -18,7 +39,7 @@ function HomeGuest() {
             </p>
           </div>
           <div className='col-lg-5 pl-lg-5 pb-3 py-lg-5'>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className='form-group'>
                 <label htmlFor='username-register' className='text-muted mb-1'>
                   <small>Username</small>
@@ -30,6 +51,7 @@ function HomeGuest() {
                   type='text'
                   placeholder='Pick a username'
                   autoComplete='off'
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div className='form-group'>
@@ -43,6 +65,7 @@ function HomeGuest() {
                   type='text'
                   placeholder='xyz@example.com'
                   autoComplete='off'
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className='form-group'>
@@ -55,6 +78,7 @@ function HomeGuest() {
                   className='form-control shadow-none'
                   type='password'
                   placeholder='Create a password'
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <button
@@ -67,7 +91,7 @@ function HomeGuest() {
             </form>
           </div>
         </div>
-      </div>
+      </Page>
     </>
   );
 }
