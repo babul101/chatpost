@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import Axios from "axios";
-import CreateContext from "../CreateContext";
+import DispatchContext from "../DispatchContext";
+
 function HeaderLoggedOut(props) {
-  const { setLoggedIn } = useContext(CreateContext);
+  const appDispatch = useContext(DispatchContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,10 +15,10 @@ function HeaderLoggedOut(props) {
         password,
       });
       if (response.data) {
-        localStorage.setItem("chatpostToken", response.data.token);
-        localStorage.setItem("chatpostUsername", response.data.username);
-        localStorage.setItem("chatpostAvatar", response.data.avatar);
-        setLoggedIn(true);
+        // localStorage.setItem("chatpostToken", response.data.token);
+        // localStorage.setItem("chatpostUsername", response.data.username);
+        // localStorage.setItem("chatpostAvatar", response.data.avatar);
+        appDispatch({ type: "login", data: response.data });
       } else {
         console.log("Incorrect username or password");
       }
