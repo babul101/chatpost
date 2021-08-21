@@ -3,6 +3,8 @@ import Page from "./Page";
 import { Link, useParams } from "react-router-dom";
 import Axios from "axios";
 import Loading from "./Loading";
+import ReactMarkdown from "react-markdown";
+import ReactTooltip from "react-tooltip";
 
 function ViewSinglePost() {
   const { id } = useParams();
@@ -10,16 +12,22 @@ function ViewSinglePost() {
   const [post, setPost] = useState();
 
   useEffect(() => {
+    const ourRequest = Axios.CancelToken.source();
     async function fetchPost() {
       try {
-        const response = await Axios.get(`/post/${id}`);
+        const response = await Axios.get(`/post/${id}`, {
+          cancelToken: ourRequest.token,
+        });
         setPost(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        console.log("Request has been aborted", error);
       }
     }
     fetchPost();
+    return () => {
+      ourRequest.cancel();
+    };
   }, []);
 
   if (isLoading) {
@@ -39,12 +47,23 @@ function ViewSinglePost() {
       <div className='d-flex justify-content-between'>
         <h2>{post.title}</h2>
         <span className='pt-2'>
-          <a href='#' className='text-primary mr-2' title='Edit'>
+          <a
+            href='#'
+            data-tip='Edit'
+            data-for='edit'
+            className='text-primary mr-2'
+          >
             <i className='fas fa-edit'></i>
           </a>
-          <a className='delete-post-button text-danger' title='Delete'>
+          <ReactTooltip id='edit' className='custom-tooltip' />{" "}
+          <a
+            data-tip='Delete'
+            data-for='delete'
+            className='delete-post-button text-danger'
+          >
             <i className='fas fa-trash'></i>
           </a>
+          <ReactTooltip id='delete' className='custom-tooltip' />
         </span>
       </div>
 
@@ -59,7 +78,10 @@ function ViewSinglePost() {
         on {formattedDate}
       </p>
 
-      <div className='body-content'>{post.body}</div>
+      {/* <div className='body-content'>{post.body}</div> */}
+      <div className='body-content'>
+        <ReactMarkdown children={post.body} />
+      </div>
     </Page>
   );
 }

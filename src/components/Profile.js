@@ -16,17 +16,26 @@ function Profile() {
   });
 
   useEffect(() => {
+    const ourRequest = Axios.CancelToken.source();
+
     async function fetchData() {
       try {
-        const response = await Axios.post(`/profile/${username}`, {
-          token: appState.user.token,
-        });
+        const response = await Axios.post(
+          `/profile/${username}`,
+          {
+            token: appState.user.token,
+          },
+          { cancelToken: ourRequest.token }
+        );
         setProfileData(response.data);
       } catch (error) {
-        console.log(error);
+        console.log("Request has been aborted", error);
       }
     }
     fetchData();
+    return () => {
+      ourRequest.cancel();
+    };
   }, []);
   return (
     <Page title='Profile'>
