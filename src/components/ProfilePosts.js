@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { useParams, Link } from "react-router-dom";
+import Loading from "./Loading";
 
 function ProfilePosts() {
   const { username } = useParams();
@@ -21,7 +22,7 @@ function ProfilePosts() {
   }, []);
 
   if (isLoading) {
-    return <div>Loading....</div>;
+    return <Loading />;
   }
   return (
     <div className='list-group'>
