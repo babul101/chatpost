@@ -5,19 +5,21 @@ import Axios from "axios";
 import Loading from "./Loading";
 import ReactMarkdown from "react-markdown";
 import ReactTooltip from "react-tooltip";
+import NotFound from "./NotFound";
 
 function ViewSinglePost() {
   const { id } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState();
   const [post, setPost] = useState();
 
   useEffect(() => {
-    const ourRequest = Axios.CancelToken.source();
+    const ourRequest = Axios.CancelToken.source(); // To avoid Memory leak situation
     async function fetchPost() {
       try {
         const response = await Axios.get(`/post/${id}`, {
           cancelToken: ourRequest.token,
         });
+
         setPost(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -29,6 +31,10 @@ function ViewSinglePost() {
       ourRequest.cancel();
     };
   }, []);
+
+  if (!isLoading && !post) {
+    return <NotFound />;
+  }
 
   if (isLoading) {
     return (
@@ -78,7 +84,6 @@ function ViewSinglePost() {
         on {formattedDate}
       </p>
 
-      {/* <div className='body-content'>{post.body}</div> */}
       <div className='body-content'>
         <ReactMarkdown children={post.body} />
       </div>

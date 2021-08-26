@@ -16,6 +16,7 @@ import EditPost from "./components/EditPost";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 import Axios from "axios";
+import NotFound from "./components/NotFound";
 Axios.defaults.baseURL = "http://localhost:8080";
 
 function App(props) {
@@ -85,6 +86,9 @@ function App(props) {
             </Route>
             <Route path='/terms'>
               <Terms />
+            </Route>
+            <Route>
+              <NotFound />
             </Route>
           </Switch>
           <Footer />

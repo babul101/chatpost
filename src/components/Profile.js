@@ -4,8 +4,11 @@ import { useParams } from "react-router-dom";
 import Axios from "axios";
 import StateContext from "../StateContext";
 import ProfilePosts from "./ProfilePosts";
+import Loading from "./Loading";
 
 function Profile() {
+  const [isLoading, setIsLoading] = useState();
+
   const { username } = useParams();
   const appState = useContext(StateContext);
   const [profileData, setProfileData] = useState({
@@ -28,6 +31,7 @@ function Profile() {
           { cancelToken: ourRequest.token }
         );
         setProfileData(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.log("Request has been aborted", error);
       }
@@ -37,6 +41,10 @@ function Profile() {
       ourRequest.cancel();
     };
   }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <Page title='Profile'>
       <h2>
