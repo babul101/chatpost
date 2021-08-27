@@ -13,7 +13,8 @@ function Profile() {
   const appState = useContext(StateContext);
   const [profileData, setProfileData] = useState({
     profileUsername: "...",
-    profileAvatar: "https://gravatar.com/avatar/placeholder?s=128",
+    profileAvatar:
+      "https://en.gravatar.com/userimage/210683691/58f6eeaa18dea9418c2156d522498fff.png",
     isFollowing: false,
     counts: { postCount: "", followerCount: "", followingCount: "" },
   });
@@ -49,6 +50,7 @@ function Profile() {
     <Page title='Profile'>
       <h2>
         <img className='avatar-small' src={profileData.profileAvatar} />{" "}
+        {/* <img className='avatar-small' src='./chat.png' />{" "} */}
         {profileData.profileUsername}
         <button className='btn btn-primary btn-sm ml-2'>
           Follow <i className='fas fa-user-plus'></i>

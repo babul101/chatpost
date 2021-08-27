@@ -12,9 +12,11 @@ import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
+import Search from "./components/Search";
 import EditPost from "./components/EditPost";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
+import { CSSTransition } from "react-transition-group";
 import Axios from "axios";
 import NotFound from "./components/NotFound";
 Axios.defaults.baseURL = "http://localhost:8080";
@@ -28,6 +30,7 @@ function App(props) {
       username: localStorage.getItem("chatpostUsername"),
       avatar: localStorage.getItem("chatpostAvatar"),
     },
+    isSearchOpen: false,
   };
 
   function ourReducer(draft, action) {
@@ -41,6 +44,12 @@ function App(props) {
         return;
       case "flashMessage":
         draft.flashMessages.push(action.value);
+        return;
+      case "openSearch":
+        draft.isSearchOpen = true;
+        return;
+      case "closeSearch":
+        draft.isSearchOpen = false;
         return;
     }
   }
@@ -91,6 +100,14 @@ function App(props) {
               <NotFound />
             </Route>
           </Switch>
+          <CSSTransition
+            timeout={330}
+            in={state.isSearchOpen}
+            classNames='search-overlay'
+            unmountOnExit
+          >
+            <Search />
+          </CSSTransition>
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
