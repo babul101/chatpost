@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { useImmerReducer } from "use-immer";
 import "./App.css";
@@ -21,7 +21,7 @@ import Axios from "axios";
 import NotFound from "./components/NotFound";
 Axios.defaults.baseURL = "http://localhost:8080";
 
-function App(props) {
+function App() {
   const initialState = {
     loggedIn: Boolean(localStorage.getItem("chatpostToken")),
     flashMessages: [],
@@ -50,6 +50,8 @@ function App(props) {
         return;
       case "closeSearch":
         draft.isSearchOpen = false;
+        return;
+      default:
         return;
     }
   }
