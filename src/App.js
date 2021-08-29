@@ -19,6 +19,7 @@ import DispatchContext from "./DispatchContext";
 import { CSSTransition } from "react-transition-group";
 import Axios from "axios";
 import NotFound from "./components/NotFound";
+import Chat from "./components/Chat";
 Axios.defaults.baseURL = "http://localhost:8080";
 
 function App() {
@@ -31,6 +32,8 @@ function App() {
       avatar: localStorage.getItem("chatpostAvatar"),
     },
     isSearchOpen: false,
+    isChatOpen: false,
+    unreadChatCount: 0,
   };
 
   function ourReducer(draft, action) {
@@ -50,6 +53,18 @@ function App() {
         return;
       case "closeSearch":
         draft.isSearchOpen = false;
+        return;
+      case "toggleChat":
+        draft.isChatOpen = !draft.isChatOpen;
+        return;
+      case "closeChat":
+        draft.isChatOpen = false;
+        return;
+      case "incrementUnreadChatCount":
+        draft.unreadChatCount++;
+        return;
+      case "clearUnreadChatCount":
+        draft.unreadChatCount = 0;
         return;
       default:
         return;
@@ -110,6 +125,7 @@ function App() {
           >
             <Search />
           </CSSTransition>
+          <Chat />
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
