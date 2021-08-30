@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import pic from "../chat.png";
 import Page from "./Page";
 import Axios from "axios";
 import { useImmerReducer } from "use-immer";
 import { CSSTransition } from "react-transition-group";
+import DispatchContext from "../DispatchContext";
 
 function HomeGuest() {
   // const [username, setUsername] = useState("");
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
+
+  const appDispatch = useContext(DispatchContext);
 
   const initialState = {
     username: {
@@ -59,7 +62,7 @@ function HomeGuest() {
           draft.username.message = "Username must be atleast 3 characters";
         }
 
-        if (!draft.hasErrors) {
+        if (!draft.hasErrors && !action.noRequest) {
           draft.username.checkCount++;
         }
         return;
@@ -81,7 +84,7 @@ function HomeGuest() {
           draft.email.hasErrors = true;
           draft.email.message = "Not a valid email address";
         }
-        if (!draft.email.hasErrors) {
+        if (!draft.email.hasErrors && !action.noRequest) {
           draft.email.checkCount++;
         }
         return;
@@ -110,6 +113,15 @@ function HomeGuest() {
         }
         return;
       case "submitForm":
+        if (
+          !draft.username.hasErrors &&
+          draft.username.isUnique &&
+          !draft.email.hasErrors &&
+          draft.email.isUnique &&
+          !draft.password.hasErrors
+        ) {
+          draft.submitCount++;
+        }
         return;
     }
   }
@@ -186,6 +198,34 @@ function HomeGuest() {
     }
   }, [state.email.checkCount]);
 
+  useEffect(() => {
+    if (state.submitCount) {
+      const ourRequest = Axios.CancelToken.source();
+      async function fetchResults() {
+        try {
+          const response = await Axios.post(
+            "/register",
+            {
+              username: state.username.value,
+              email: state.email.value,
+              password: state.password.value,
+            },
+            { cancelToken: ourRequest.token }
+          );
+          appDispatch({ type: "login", data: response.data });
+          appDispatch({
+            type: "flashMessage",
+            value: "Congratulation's you have created a new account",
+          });
+        } catch (error) {
+          console.log("Request has been aborted");
+        }
+      }
+      fetchResults();
+      return () => ourRequest.cancel();
+    }
+  }, [state.submitCount]);
+
   function handleSubmit(e) {
     e.preventDefault();
     // try {
@@ -198,6 +238,22 @@ function HomeGuest() {
     // } catch (error) {
     //   console.log("There is an error", error);
     // }
+
+    dispatch({ type: "usernameImmediately", value: state.username.value });
+    dispatch({
+      type: "usernameAfterDelay",
+      value: state.username.value,
+      noRequest: true,
+    });
+    dispatch({ type: "emailImmediately", value: state.email.value });
+    dispatch({
+      type: "emailAfterDelay",
+      value: state.email.value,
+      noRequest: true,
+    });
+    dispatch({ type: "passwordImmediately", value: state.password.value });
+    dispatch({ type: "passwordAfterDelay", value: state.password.value });
+    dispatch({ type: "submitForm" });
   }
 
   return (
