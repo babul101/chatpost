@@ -13,17 +13,17 @@ import Terms from "./components/Terms";
 // import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
-import Search from "./components/Search";
 import EditPost from "./components/EditPost";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 import { CSSTransition } from "react-transition-group";
 import Axios from "axios";
 import NotFound from "./components/NotFound";
-import Chat from "./components/Chat";
 import Loading from "./components/Loading";
 const CreatePost = React.lazy(() => import("./components/CreatePost"));
 const ViewSinglePost = React.lazy(() => import("./components/ViewSinglePost"));
+const Search = React.lazy(() => import("./components/Search"));
+const Chat = React.lazy(() => import("./components/Chat"));
 
 Axios.defaults.baseURL = "http://localhost:8080";
 
@@ -156,9 +156,13 @@ function App() {
             classNames='search-overlay'
             unmountOnExit
           >
-            <Search />
+            <div className='search-overlay'>
+              <Suspense fallback=''>
+                <Search />
+              </Suspense>
+            </div>
           </CSSTransition>
-          <Chat />
+          <Suspense fallback=''>{state.loggedIn && <Chat />}</Suspense>
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
