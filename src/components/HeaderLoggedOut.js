@@ -19,8 +19,15 @@ function HeaderLoggedOut(props) {
         // localStorage.setItem("chatpostUsername", response.data.username);
         // localStorage.setItem("chatpostAvatar", response.data.avatar);
         appDispatch({ type: "login", data: response.data });
+        appDispatch({
+          type: "flashMessage",
+          value: "You have successfully logged in",
+        });
       } else {
-        console.log("Incorrect username or password");
+        appDispatch({
+          type: "flashMessage",
+          value: "Invalid username or password",
+        });
       }
     } catch (error) {
       console.log(error);
